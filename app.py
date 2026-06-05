@@ -11,19 +11,24 @@ st.set_page_config(page_title="EcoVision AI", page_icon="♻️", layout="wide")
 
 @st.cache_resource
 def load_waste_model():
-    model = tf.keras.models.load_model(
-        r"C:\Users\user\Documents\ECO - FRIENDLY CAPSTONE PROJECT\best_model.keras",
-        compile=False
-    )
-    return model
+    try:
+        model = tf.keras.models.load_model(
+            "best_model.keras",
+            compile=False
+        )
+        return model
+    except Exception as e:
+        st.error(f"Model loading failed: {e}")
+        return None
 
+model = load_waste_model()
 IMG_SIZE = 224
 
 CLASS_NAMES = [
     "Non-Recyclable",
     "Recyclable"
 ]
-model = load_waste_model()
+
 # ---------------- API KEYS ----------------
 
 GROQ_API_KEY = "GROQ_API_KEY"
