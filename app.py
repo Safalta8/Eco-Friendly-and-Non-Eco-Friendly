@@ -655,7 +655,7 @@ elif module == "Dustbin Classification":
                 import os
 
                 if prediction == "Recyclable":
-                    st.balloons()
+                    
 
                     if os.path.exists("images/blue_dustbin.png"):
                         st.image("images/blue_dustbin.png", width=220)
