@@ -25,8 +25,8 @@ CLASS_NAMES = [
 ]
 model = load_waste_model()
 # ---------------- API KEYS ----------------
-GROQ_API_KEY="GROQ_API_KEY"
-GEMINI_API_KEY="GEMINI_API_KEY"
+GROQ_API_KEY = st.secrets["GROQ_API_KEY"]
+GEMINI_API_KEY = st.secrets["GEMINI_API_KEY"]
 
 
 client = Groq(api_key=GROQ_API_KEY)
@@ -404,10 +404,8 @@ def predict_waste(image):
 
     prediction = model.predict(img_array, verbose=0)
 
-    # Debug
     st.write("Prediction Output:", prediction)
 
-    # Binary model
     if prediction.shape[-1] == 1:
 
         score = float(prediction[0][0])
@@ -419,7 +417,6 @@ def predict_waste(image):
             predicted_class = "Non-Recyclable"
             confidence = (1 - score) * 100
 
-    # Softmax model
     else:
 
         recyclable_score = prediction[0][1]
@@ -433,14 +430,6 @@ def predict_waste(image):
             confidence = non_recyclable_score * 100
 
     return predicted_class, confidence
-
-st.markdown("""
-<style>
-
-/* ALL YOUR CSS HERE */
-
-</style>
-""", unsafe_allow_html=True)
 
 
 # ---------------- DIY IDEA GENERATOR ----------------
@@ -771,6 +760,8 @@ elif module == "Dustbin Classification":
 
                 with col3:
                     st.metric("♻️ Category", prediction)
+                
+
 # ---------------- DIY ----------------
 
 elif module == "DIY Best Out of Waste":
