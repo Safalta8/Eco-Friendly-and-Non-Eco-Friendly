@@ -3,6 +3,6 @@ pandas
 numpy
 altair
 pillow
-tensorflow==2.16.1
+tensorflow
 groq
 google-genai
