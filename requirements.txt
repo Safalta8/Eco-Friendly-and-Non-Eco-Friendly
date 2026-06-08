@@ -1,8 +1,8 @@
-streamlit
-pandas
-numpy
-altair
-pillow
-tensorflow
-groq
-google-genai
+streamlit==1.45.1
+pandas==2.3.0
+numpy==1.26.4
+altair==5.5.0
+Pillow==11.2.1
+tensorflow==2.19.0
+groq==0.28.0
+google-genai==1.21.1
