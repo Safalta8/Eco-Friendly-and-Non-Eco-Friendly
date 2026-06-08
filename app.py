@@ -9,13 +9,21 @@ import numpy as np
 
 st.set_page_config(page_title="EcoVision AI", page_icon="♻️", layout="wide")
 
+import os
+
 @st.cache_resource
 def load_waste_model():
-    model = tf.keras.models.load_model(
-        r"best_model.keras",
+
+    model_path = "best_model.keras"
+
+    if not os.path.exists(model_path):
+        st.error(f"Model file not found: {model_path}")
+        return None
+
+    return tf.keras.models.load_model(
+        model_path,
         compile=False
     )
-    return model
 
 IMG_SIZE = 224
 
