@@ -11,28 +11,23 @@ st.set_page_config(page_title="EcoVision AI", page_icon="♻️", layout="wide")
 
 @st.cache_resource
 def load_waste_model():
-    try:
-        model = tf.keras.models.load_model(
-            "best_model.keras",
-            compile=False
-        )
-        return model
-    except Exception as e:
-        st.error(f"Model loading failed: {e}")
-        return None
+    model = tf.keras.models.load_model(
+        r"C:\\Users\\user\\Documents\\ECO - FRIENDLY CAPSTONE PROJECT\\best_model.keras",
+        compile=False
+    )
+    return model
 
-model = load_waste_model()
 IMG_SIZE = 224
 
 CLASS_NAMES = [
     "Non-Recyclable",
     "Recyclable"
 ]
-
+model = load_waste_model()
 # ---------------- API KEYS ----------------
 
-GROQ_API_KEY = "GROQ_API_KEY"
-GEMINI_API_KEY = "GEMINI_API_KEY"
+GROQ_API_KEY="GROQ_API_KEY"
+GEMINI_API_KEY="GEMINI_API_KEY"
 
 
 client = Groq(api_key=GROQ_API_KEY)
@@ -64,6 +59,8 @@ background:linear-gradient(135deg,#F4F7F6,#E9F5EF);
 font-family:'Segoe UI',sans-serif;
 color:var(--text-dark);
 }
+
+
 
 /* =========================
    SIDEBAR
@@ -400,32 +397,98 @@ def predict_waste(image):
     if model is None:
         return "Model Not Loaded", 0
 
-    img = image.resize((IMG_SIZE, IMG_SIZE))
-    img_array = np.array(img).astype("float32") / 255.0
+    img = image.convert("RGB")
+    img = img.resize((224, 224))
+
+    img_array = np.array(img, dtype=np.float32) / 255.0
     img_array = np.expand_dims(img_array, axis=0)
 
     prediction = model.predict(img_array, verbose=0)
 
-    predicted_index = np.argmax(prediction)
-    confidence = float(np.max(prediction) * 100)
+    # Debug
+    st.write("Prediction Output:", prediction)
 
-    predicted_class = CLASS_NAMES[predicted_index]
+    # Binary model
+    if prediction.shape[-1] == 1:
+
+        score = float(prediction[0][0])
+
+        if score >= 0.5:
+            predicted_class = "Recyclable"
+            confidence = score * 100
+        else:
+            predicted_class = "Non-Recyclable"
+            confidence = (1 - score) * 100
+
+    # Softmax model
+    else:
+
+        recyclable_score = prediction[0][1]
+        non_recyclable_score = prediction[0][0]
+
+        if recyclable_score > non_recyclable_score:
+            predicted_class = "Recyclable"
+            confidence = recyclable_score * 100
+        else:
+            predicted_class = "Non-Recyclable"
+            confidence = non_recyclable_score * 100
 
     return predicted_class, confidence
 
-def generate_diy_ideas(material):
-    response = client.chat.completions.create(
-        model="llama-3.3-70b-versatile",
-        messages=[{"role":"user","content":f"Suggest 3 creative DIY projects using {material}."}]
-    )
-    return response.choices[0].message.content
+st.markdown("""
+<style>
 
-def get_eco_tips(user_input):
-    response = client.chat.completions.create(
-        model="llama-3.3-70b-versatile",
-        messages=[{"role":"user","content":f"Give eco-friendly recommendations for {user_input}"}]
-    )
-    return response.choices[0].message.content
+/* ALL YOUR CSS HERE */
+
+</style>
+""", unsafe_allow_html=True)
+
+
+# ---------------- DIY IDEA GENERATOR ----------------
+
+def generate_diy_ideas(material):
+
+    try:
+
+        prompt = f"""
+        Give 5 creative DIY projects using {material}.
+        """
+
+        response = client.chat.completions.create(
+            model="llama-3.1-8b-instant",
+            messages=[
+                {"role":"user","content":prompt}
+            ]
+        )
+
+        return response.choices[0].message.content
+
+    except Exception as e:
+        return str(e)
+
+
+# ---------------- ECO TIPS GENERATOR ----------------
+
+def get_eco_tips(user_query):
+
+    try:
+
+        prompt = f"""
+        Give eco-friendly recommendations for:
+        {user_query}
+        """
+
+        response = client.chat.completions.create(
+            model="llama-3.1-8b-instant",
+            messages=[
+                {"role":"user","content":prompt}
+            ]
+        )
+
+        return response.choices[0].message.content
+
+    except Exception as e:
+        return str(e)
 
 # ---------------- SIDEBAR ----------------
 
@@ -894,7 +957,7 @@ elif module == "About Project":
         max-width: 850px;
         font-size: 1.2rem;
         line-height: 1.8;
-        background: rgba(0,0,0,0.35); /* हल्का transparent box */
+        background: rgba(0,0,0,0.35); 
         padding: 30px;
         border-radius: 15px;
     }
