@@ -12,7 +12,7 @@ st.set_page_config(page_title="EcoVision AI", page_icon="♻️", layout="wide")
 @st.cache_resource
 def load_waste_model():
     model = tf.keras.models.load_model(
-        r"C:\\Users\\user\\Documents\\ECO - FRIENDLY CAPSTONE PROJECT\\best_model.keras",
+        r"best_model.keras",
         compile=False
     )
     return model
