@@ -726,7 +726,7 @@ elif module == "Dustbin Classification":
                     if os.path.exists("images/black_dustbin.png"):
                         st.image("images/black_dustbin.png", width=220)
 
-                    st.error("⚫ Non-Recyclable Waste → Black Dustbin")
+                    st.error("🟢 Non-Recyclable Waste → Green Dustbin")
 
                 st.info(
                     "🌍 Proper waste segregation helps reduce pollution and increases recycling efficiency."
